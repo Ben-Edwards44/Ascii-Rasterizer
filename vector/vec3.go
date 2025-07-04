@@ -83,3 +83,8 @@ func (vec *Vec3) RotZ(angle float64) {
 
 	vec.applyRot(rot_mat)
 }
+
+
+func Dot3(a *Vec3, b *Vec3) float64 {
+	return a.X * b.X + a.Y * b.Y + a.Z * b.Z
+}

@@ -15,13 +15,13 @@ func (vec *Vec2) Rot90() Vec2 {
 }
 
 
-func Dot(a Vec2, b Vec2) float64 {
+func dot2(a Vec2, b Vec2) float64 {
 	return a.X * b.X + a.Y * b.Y
 }
 
 
 func VecsSameDir(a Vec2, b Vec2) bool {
-	return Dot(a, b) > 0
+	return dot2(a, b) > 0
 }
 
 

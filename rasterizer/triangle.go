@@ -39,6 +39,11 @@ func CreateTriangle(world_a vector.Vec3, world_b vector.Vec3, world_c vector.Vec
 }
 
 
+func (tri *Triangle) GetNormal() vector.Vec3 {
+	return tri.normal_vec
+}
+
+
 func (tri *Triangle) PointInTri(point vector.Vec2) bool {
 	ap := vector.Sub(point, tri.screen_a)
 	bp := vector.Sub(point, tri.screen_b)

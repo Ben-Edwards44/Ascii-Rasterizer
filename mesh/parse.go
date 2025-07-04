@@ -98,17 +98,27 @@ func extractVectors(lines []string, identifier string) []vector.Vec3 {
 }
 
 
-func rotateVertices(vertices []vector.Vec3, rot_x float64, rot_y float64, rot_z float64) []vector.Vec3 {
-	var rotated []vector.Vec3
+func rotate(vertices []vector.Vec3, normals []vector.Vec3, rot_x float64, rot_y float64, rot_z float64) ([]vector.Vec3, []vector.Vec3) {
+	var rotated_verts []vector.Vec3
+	var rotated_norms []vector.Vec3
+
 	for _, i := range vertices {
 		i.RotX(rot_x)
 		i.RotY(rot_y)
 		i.RotZ(rot_z)
 
-		rotated = append(rotated, i)
+		rotated_verts = append(rotated_verts, i)
 	}
 
-	return rotated
+	for _, i := range normals {
+		i.RotX(rot_x)
+		i.RotY(rot_y)
+		i.RotZ(rot_z)
+
+		rotated_norms = append(rotated_norms, i)
+	}
+
+	return rotated_verts, rotated_norms
 }
 
 
@@ -166,9 +176,12 @@ func build_faces(lines []string, vertices []vector.Vec3, normals []vector.Vec3) 
 func ParseModel(filename string, rot_x float64, rot_y float64, rot_z float64) []rasterizer.Triangle {
 	file_data := readFile(filename)
 	lines := split(file_data, '\n')
+
 	vertices := extractVectors(lines, "v")
-	vertices = rotateVertices(vertices, rot_x, rot_y, rot_z)
 	normals := extractVectors(lines, "vn")
+
+	vertices, normals = rotate(vertices, normals, rot_x, rot_y, rot_z)
+
 	model_triangles := build_faces(lines, vertices, normals)
 
 	return model_triangles
