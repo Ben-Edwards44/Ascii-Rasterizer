@@ -2,9 +2,10 @@ package mesh
 
 import (
 	"os"
-	"fmt"
 	"strconv"
+
 	"github.com/Ben-Edwards44/Ascii-Rasterizer/rasterizer"
+	"github.com/Ben-Edwards44/Ascii-Rasterizer/vector"
 )
 
 
@@ -53,20 +54,20 @@ func isNum(char rune) bool {
 }
 
 
-func appendNum(current_num string, nums []float32) []float32 {
+func appendNum(current_num string, nums []float64) []float64 {
 	num, err := strconv.ParseFloat(current_num, 32)
 	checkError(err)
 
-	nums = append(nums, float32(num))
+	nums = append(nums, float64(num))
 
 	return nums
 }
 
 
-func extractNums(line string) []float32 {
+func extractNums(line string) []float64 {
 	current_num := ""
 
-	var nums []float32
+	var nums []float64
 	for _, i := range line {
 		if isNum(i) {
 			current_num += string(i)
@@ -82,11 +83,13 @@ func extractNums(line string) []float32 {
 }
 
 
-func extractValues(lines []string, identifier rune) [][]float32 {
-	var values [][]float32
+func extractVertices(lines []string) []vector.Vec3 {
+	var values []vector.Vec3
 	for _, i := range lines {
-		if i[0] == byte(identifier) {
-			values = append(values, extractNums(i))
+		line_type := split(i, ' ')[0]
+		if line_type == "v" {
+			vertex_coords := extractNums(i)
+			values = append(values, vector.CreateVec3(vertex_coords[0], vertex_coords[1], vertex_coords[2]))
 		}
 	}
 
@@ -94,8 +97,8 @@ func extractValues(lines []string, identifier rune) [][]float32 {
 }
 
 
-func projectVertices(vertices [][]float32) []rasterizer.Vec2 {
-	var projected_vertices []rasterizer.Vec2
+func projectVertices(vertices []vector.Vec3) []vector.Vec2 {
+	var projected_vertices []vector.Vec2
 	for _, i := range vertices {
 		projected_vertex := rasterizer.ConvertTo2d(i)
 		projected_vertices = append(projected_vertices, projected_vertex)
@@ -105,7 +108,21 @@ func projectVertices(vertices [][]float32) []rasterizer.Vec2 {
 }
 
 
-func build_triangles(face_vertices []rasterizer.Vec2) []rasterizer.Triangle {
+func rotateVertices(vertices []vector.Vec3, rot_x float64, rot_y float64, rot_z float64) []vector.Vec3 {
+	var rotated []vector.Vec3
+	for _, i := range vertices {
+		i.RotX(rot_x)
+		i.RotY(rot_y)
+		i.RotZ(rot_z)
+
+		rotated = append(rotated, i)
+	}
+
+	return rotated
+}
+
+
+func build_triangles(face_vertices []vector.Vec2) []rasterizer.Triangle {
 	if len(face_vertices) < 3 {panic("invalid number of vertices in face")}
 	
 	start := face_vertices[0]
@@ -119,20 +136,18 @@ func build_triangles(face_vertices []rasterizer.Vec2) []rasterizer.Triangle {
 		triangles = append(triangles, tri)
 	}
 
-	fmt.Printf("%v,%v\n", len(triangles), len(face_vertices))
-
 	return triangles
 }
 
 
-func build_faces(lines []string, projected_vertices []rasterizer.Vec2) []rasterizer.Triangle {
+func build_faces(lines []string, projected_vertices []vector.Vec2) []rasterizer.Triangle {
 	var model_triangles []rasterizer.Triangle
 	for _, i := range lines {
 		if i[0] != 'f' {continue}
 
 		triplets := split(i, ' ')[1:]
 
-		var face_vertices []rasterizer.Vec2
+		var face_vertices []vector.Vec2
 		for _, x := range triplets {
 			vertex := split(x, '/')[0]
 			vertex_inx, err := strconv.Atoi(vertex)
@@ -150,10 +165,11 @@ func build_faces(lines []string, projected_vertices []rasterizer.Vec2) []rasteri
 }
 
 
-func ParseModel(filename string) []rasterizer.Triangle {
+func ParseModel(filename string, rot_x float64, rot_y float64, rot_z float64) []rasterizer.Triangle {
 	file_data := readFile(filename)
 	lines := split(file_data, '\n')
-	vertices := extractValues(lines, 'v')
+	vertices := extractVertices(lines)
+	vertices = rotateVertices(vertices, rot_x, rot_y, rot_z)
 	projected_vertices := projectVertices(vertices)
 	model_triangles := build_faces(lines, projected_vertices)
 

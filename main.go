@@ -4,6 +4,7 @@ package main
 import (
 	"fmt"
 	"github.com/Ben-Edwards44/Ascii-Rasterizer/mesh"
+	"github.com/Ben-Edwards44/Ascii-Rasterizer/vector"
 	"github.com/Ben-Edwards44/Ascii-Rasterizer/rasterizer"
 )
 
@@ -39,7 +40,7 @@ func printScreen(pixels [SCREEN_HEIGHT][SCREEN_WIDTH]int) {
 
 
 func triInPixel(pixel_x int, pixel_y int, tris []rasterizer.Triangle) bool {
-	point := rasterizer.CreateVec2(float32(pixel_x), float32(pixel_y))
+	point := vector.Vec2{X: float64(pixel_x), Y: float64(pixel_y)}
 
 	for _, i := range tris {
 		if i.PointInTri(point) {return true}
@@ -49,49 +50,28 @@ func triInPixel(pixel_x int, pixel_y int, tris []rasterizer.Triangle) bool {
 }
 
 
-func triTest() {
-	t := rasterizer.CreateTriangle(rasterizer.CreateVec2(2.1, 2.1), rasterizer.CreateVec2(2.1, 2.1), rasterizer.CreateVec2(2.1, 2.1))
-
-	var screen [SCREEN_HEIGHT][SCREEN_WIDTH]int
-
-	for i := 0; i < SCREEN_HEIGHT; i++ {
-		for x := 0; x < SCREEN_WIDTH; x++ {
-			c := 0
-
-			if t.PointInTri(rasterizer.CreateVec2(float32(x), float32(i))) {
-				c = 1
-			}
-
-			screen[i][x] = c
-		}
-	}
-
-	printScreen(screen)
-}
-
-
 func otherTest() {
-	tris := mesh.ParseModel("models/cube.obj")
+	theta := 0.0
+	for {
+		theta += 0.001
+		tris := mesh.ParseModel("models/cube.obj", theta, theta, theta)
 
-	for _, i := range tris {
-		i.Print()
-	}
+		var screen [SCREEN_HEIGHT][SCREEN_WIDTH]int
 
-	var screen [SCREEN_HEIGHT][SCREEN_WIDTH]int
+		for i := 0; i < SCREEN_HEIGHT; i++ {
+			for x := 0; x < SCREEN_WIDTH; x++ {
+				c := 0
 
-	for i := 0; i < SCREEN_HEIGHT; i++ {
-		for x := 0; x < SCREEN_WIDTH; x++ {
-			c := 0
+				if triInPixel(x, i, tris) {
+					c = 1
+				}
 
-			if triInPixel(x, i, tris) {
-				c = 1
+				screen[i][x] = c
 			}
-
-			screen[i][x] = c
 		}
-	}
 
-	printScreen(screen)
+		printScreen(screen)
+	}
 }
 
 

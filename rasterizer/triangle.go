@@ -1,48 +1,38 @@
 package rasterizer
 
 
-import "fmt"
-
+import (
+	"github.com/Ben-Edwards44/Ascii-Rasterizer/vector"
+)
 
 type Triangle struct {
-	a Vec2
-	b Vec2
-	c Vec2
+	a vector.Vec2
+	b vector.Vec2
+	c vector.Vec2
 
-	ab_out Vec2
-	bc_out Vec2
-	ca_out Vec2
+	ab_out vector.Vec2
+	bc_out vector.Vec2
+	ca_out vector.Vec2
 }
 
 
-func CreateTriangle(a Vec2, b Vec2, c Vec2) Triangle {
-	ab := sub(b, a)
-	bc := sub(c, b)
-	ca := sub(a, c)
+func CreateTriangle(a vector.Vec2, b vector.Vec2, c vector.Vec2) Triangle {
+	ab := vector.Sub(b, a)
+	bc := vector.Sub(c, b)
+	ca := vector.Sub(a, c)
 
-	ab_out := ab.rot90()
-	bc_out := bc.rot90()
-	ca_out := ca.rot90()
+	ab_out := ab.Rot90()
+	bc_out := bc.Rot90()
+	ca_out := ca.Rot90()
 
 	return Triangle{a, b, c, ab_out, bc_out, ca_out}
 }
 
 
-func (tri *Triangle) PointInTri(point Vec2) bool {
-	ap := sub(point, tri.a)
-	bp := sub(point, tri.b)
-	cp := sub(point, tri.c)
+func (tri *Triangle) PointInTri(point vector.Vec2) bool {
+	ap := vector.Sub(point, tri.a)
+	bp := vector.Sub(point, tri.b)
+	cp := vector.Sub(point, tri.c)
 
-	return vecsSameDir(ap, tri.ab_out) && vecsSameDir(bp, tri.bc_out) && vecsSameDir(cp, tri.ca_out)
-}
-
-
-func (tri *Triangle) Print() {
-	fmt.Printf("triangle: A(%v,%v), B(%v,%v), C(%v,%v)\n", 
-			   tri.a.x, 
-			   tri.a.y,
-			   tri.b.x,
-			   tri.b.y,
-			   tri.c.x,
-			   tri.c.y)
+	return vector.VecsSameDir(ap, tri.ab_out) && vector.VecsSameDir(bp, tri.bc_out) && vector.VecsSameDir(cp, tri.ca_out)
 }

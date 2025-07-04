@@ -1,6 +1,9 @@
 package rasterizer
 
 
-func ConvertTo2d(point []float32) Vec2 {
-	return CreateVec2(point[0] * 3 + 3, point[1] * 3 + 3)
+import "github.com/Ben-Edwards44/Ascii-Rasterizer/vector"
+
+
+func ConvertTo2d(point vector.Vec3) vector.Vec2 {
+	return vector.Vec2{X: point.X * 3 + 3, Y: point.Y * 3 + 3}
 }
