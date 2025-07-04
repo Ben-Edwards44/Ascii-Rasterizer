@@ -83,28 +83,17 @@ func extractNums(line string) []float64 {
 }
 
 
-func extractVertices(lines []string) []vector.Vec3 {
+func extractVectors(lines []string, identifier string) []vector.Vec3 {
 	var values []vector.Vec3
 	for _, i := range lines {
 		line_type := split(i, ' ')[0]
-		if line_type == "v" {
+		if line_type == identifier {
 			vertex_coords := extractNums(i)
 			values = append(values, vector.CreateVec3(vertex_coords[0], vertex_coords[1], vertex_coords[2]))
 		}
 	}
 
 	return values
-}
-
-
-func projectVertices(vertices []vector.Vec3) []vector.Vec2 {
-	var projected_vertices []vector.Vec2
-	for _, i := range vertices {
-		projected_vertex := rasterizer.ConvertTo2d(i)
-		projected_vertices = append(projected_vertices, projected_vertex)
-	}
-
-	return projected_vertices
 }
 
 
@@ -122,7 +111,7 @@ func rotateVertices(vertices []vector.Vec3, rot_x float64, rot_y float64, rot_z 
 }
 
 
-func build_triangles(face_vertices []vector.Vec2) []rasterizer.Triangle {
+func build_triangles(face_vertices []vector.Vec3, face_normal vector.Vec3) []rasterizer.Triangle {
 	if len(face_vertices) < 3 {panic("invalid number of vertices in face")}
 	
 	start := face_vertices[0]
@@ -130,7 +119,7 @@ func build_triangles(face_vertices []vector.Vec2) []rasterizer.Triangle {
 
 	var triangles []rasterizer.Triangle
 	for _, current := range face_vertices[2:] {
-		tri := rasterizer.CreateTriangle(start, prev, current)
+		tri := rasterizer.CreateTriangle(start, prev, current, face_normal)
 
 		prev = current
 		triangles = append(triangles, tri)
@@ -140,24 +129,32 @@ func build_triangles(face_vertices []vector.Vec2) []rasterizer.Triangle {
 }
 
 
-func build_faces(lines []string, projected_vertices []vector.Vec2) []rasterizer.Triangle {
+func build_faces(lines []string, vertices []vector.Vec3, normals []vector.Vec3) []rasterizer.Triangle {
 	var model_triangles []rasterizer.Triangle
 	for _, i := range lines {
 		if i[0] != 'f' {continue}
 
 		triplets := split(i, ' ')[1:]
 
-		var face_vertices []vector.Vec2
+		var face_normal vector.Vec3
+		var face_vertices []vector.Vec3
+
 		for _, x := range triplets {
-			vertex := split(x, '/')[0]
-			vertex_inx, err := strconv.Atoi(vertex)
+			indexes := split(x, '/')
+
+			vertex_inx, err := strconv.Atoi(indexes[0])
+			checkError(err)
+
+			normal_inx, err := strconv.Atoi(indexes[2])
 			checkError(err)
 
 			//why obj files are 1-indexed I will never understand...
-			face_vertices = append(face_vertices, projected_vertices[vertex_inx - 1])
+			face_normal = normals[normal_inx - 1]
+			face_vertices = append(face_vertices, vertices[vertex_inx - 1])
 		}
 
-		face_triangles := build_triangles(face_vertices)
+		//just assume the face normal is the normal of the last vertex in the face
+		face_triangles := build_triangles(face_vertices, face_normal)
 		model_triangles = append(model_triangles, face_triangles...)
 	}
 
@@ -168,10 +165,10 @@ func build_faces(lines []string, projected_vertices []vector.Vec2) []rasterizer.
 func ParseModel(filename string, rot_x float64, rot_y float64, rot_z float64) []rasterizer.Triangle {
 	file_data := readFile(filename)
 	lines := split(file_data, '\n')
-	vertices := extractVertices(lines)
+	vertices := extractVectors(lines, "v")
 	vertices = rotateVertices(vertices, rot_x, rot_y, rot_z)
-	projected_vertices := projectVertices(vertices)
-	model_triangles := build_faces(lines, projected_vertices)
+	normals := extractVectors(lines, "vn")
+	model_triangles := build_faces(lines, vertices, normals)
 
 	return model_triangles
 }

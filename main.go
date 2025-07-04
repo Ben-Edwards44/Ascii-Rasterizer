@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	SCREEN_WIDTH = 10
-	SCREEN_HEIGHT = 10
+	SCREEN_WIDTH = 100
+	SCREEN_HEIGHT = 50
 )
 
 
