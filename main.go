@@ -7,20 +7,24 @@ import (
 	"github.com/Ben-Edwards44/Ascii-Rasterizer/vector"
 )
 
-const (
-	SCREEN_WIDTH = 100
-	SCREEN_HEIGHT = 40
-)
-
 
 func triInPixel(pixel_x int, pixel_y int, tris []rasterizer.Triangle) (bool, rasterizer.Triangle) {
 	point := vector.Vec2{X: float64(pixel_x), Y: float64(pixel_y)}
 
+	hit := false
+	var nearest_tri rasterizer.Triangle
+
 	for _, i := range tris {
-		if i.PointInTri(point) {return true, i}
+		if i.PointInTri(point) {
+			if !hit || nearest_tri.GetWorldCenter().Z < nearest_tri.GetWorldCenter().Z {
+				nearest_tri = i
+			}
+
+			hit = true
+		}
 	}
 
-	return false, rasterizer.Triangle{}
+	return hit, nearest_tri
 }
 
 
@@ -28,13 +32,13 @@ func otherTest() {
 	theta := 0.0
 	sun_dir := vector.Vec3{1, 0, 0}
 	for {
-		theta += 0.001
-		tris := mesh.ParseModel("models/cube.obj", theta, theta, theta)
+		theta += 0.005
+		tris := mesh.ParseModel("models/suzanne.obj", theta, theta, theta, vector.Vec3{0, 0, 4})
 
-		var screen [SCREEN_HEIGHT][SCREEN_WIDTH]pixel
+		var screen [rasterizer.SCREEN_HEIGHT][rasterizer.SCREEN_WIDTH]pixel
 
-		for i := 0; i < SCREEN_HEIGHT; i++ {
-			for x := 0; x < SCREEN_WIDTH; x++ {
+		for i := 0; i < rasterizer.SCREEN_HEIGHT; i++ {
+			for x := 0; x < rasterizer.SCREEN_WIDTH; x++ {
 				p := pixel{0, 0, 0}
 
 				hits, tri := triInPixel(x, i, tris)
@@ -60,5 +64,5 @@ func main() {
 	//triTest()
 	otherTest()
 
-	moveCursor(SCREEN_HEIGHT, false)
+	moveCursor(rasterizer.SCREEN_HEIGHT, false)
 }

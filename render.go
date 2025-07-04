@@ -1,7 +1,10 @@
 package main
 
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/Ben-Edwards44/Ascii-Rasterizer/rasterizer"
+)
 
 
 type pixel struct {
@@ -24,7 +27,7 @@ func setColour (r int, g int, b int) {
 }
 
 
-func printScreen(pixels [SCREEN_HEIGHT][SCREEN_WIDTH]pixel) {
+func printScreen(pixels [rasterizer.SCREEN_HEIGHT][rasterizer.SCREEN_WIDTH]pixel) {
 	for _, row := range pixels {
 		for _, pixel := range row {
 			setColour(pixel.r, pixel.g, pixel.b)
@@ -34,5 +37,5 @@ func printScreen(pixels [SCREEN_HEIGHT][SCREEN_WIDTH]pixel) {
 		fmt.Print("\n")
 	}
 
-	moveCursor(SCREEN_HEIGHT, true)
+	moveCursor(rasterizer.SCREEN_HEIGHT, true)
 }

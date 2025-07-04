@@ -122,6 +122,17 @@ func rotate(vertices []vector.Vec3, normals []vector.Vec3, rot_x float64, rot_y 
 }
 
 
+func translate(vertices []vector.Vec3, translation vector.Vec3) []vector.Vec3 {
+	var translated []vector.Vec3
+	for _, i := range vertices {
+		new_vertex := vector.Add(i, translation)
+		translated = append(translated, new_vertex)
+	}
+
+	return translated
+}
+
+
 func build_triangles(face_vertices []vector.Vec3, face_normal vector.Vec3) []rasterizer.Triangle {
 	if len(face_vertices) < 3 {panic("invalid number of vertices in face")}
 	
@@ -173,7 +184,7 @@ func build_faces(lines []string, vertices []vector.Vec3, normals []vector.Vec3) 
 }
 
 
-func ParseModel(filename string, rot_x float64, rot_y float64, rot_z float64) []rasterizer.Triangle {
+func ParseModel(filename string, rot_x float64, rot_y float64, rot_z float64, translation vector.Vec3) []rasterizer.Triangle {
 	file_data := readFile(filename)
 	lines := split(file_data, '\n')
 
@@ -181,6 +192,7 @@ func ParseModel(filename string, rot_x float64, rot_y float64, rot_z float64) []
 	normals := extractVectors(lines, "vn")
 
 	vertices, normals = rotate(vertices, normals, rot_x, rot_y, rot_z)
+	vertices = translate(vertices, translation)
 
 	model_triangles := build_faces(lines, vertices, normals)
 

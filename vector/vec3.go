@@ -17,6 +17,11 @@ func CreateVec3(x float64, y float64, z float64) Vec3 {
 }
 
 
+func Add(a Vec3, b Vec3) Vec3 {
+	return Vec3{a.X + b.X, a.Y + b.Y, a.Z + b.Z}
+}
+
+
 func matMul(mat_a [][]float64, mat_b [][]float64) [][]float64 {
 	var result [][]float64
 	for i := 0; i < len(mat_a); i++ {
