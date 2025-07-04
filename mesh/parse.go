@@ -1,11 +1,12 @@
 package mesh
 
+
 import (
 	"os"
 	"strconv"
 
-	"github.com/Ben-Edwards44/Ascii-Rasterizer/rasterizer"
 	"github.com/Ben-Edwards44/Ascii-Rasterizer/vector"
+	"github.com/Ben-Edwards44/Ascii-Rasterizer/rasterizer"
 )
 
 

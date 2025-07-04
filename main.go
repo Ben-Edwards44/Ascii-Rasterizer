@@ -2,7 +2,6 @@ package main
 
 
 import (
-	"fmt"
 	"github.com/Ben-Edwards44/Ascii-Rasterizer/mesh"
 	"github.com/Ben-Edwards44/Ascii-Rasterizer/vector"
 	"github.com/Ben-Edwards44/Ascii-Rasterizer/rasterizer"
@@ -12,31 +11,6 @@ const (
 	SCREEN_WIDTH = 100
 	SCREEN_HEIGHT = 50
 )
-
-
-func moveCursor(lines int, move_up bool) {
-	char := 'B'
-	if move_up {char = 'A'}
-
-	fmt.Printf("\033[%v%c", lines, char)
-}
-
-
-func printScreen(pixels [SCREEN_HEIGHT][SCREEN_WIDTH]int) {
-	for _, row := range pixels {
-		for _, pixel := range row {
-			if pixel == 0 {
-				fmt.Print("#")
-			} else {
-				fmt.Print("~")
-			}
-		}
-
-		fmt.Print("\n")
-	}
-
-	moveCursor(SCREEN_HEIGHT, true)
-}
 
 
 func triInPixel(pixel_x int, pixel_y int, tris []rasterizer.Triangle) bool {
@@ -56,17 +30,19 @@ func otherTest() {
 		theta += 0.001
 		tris := mesh.ParseModel("models/cube.obj", theta, theta, theta)
 
-		var screen [SCREEN_HEIGHT][SCREEN_WIDTH]int
+		var screen [SCREEN_HEIGHT][SCREEN_WIDTH]pixel
 
 		for i := 0; i < SCREEN_HEIGHT; i++ {
 			for x := 0; x < SCREEN_WIDTH; x++ {
-				c := 0
+				p := pixel{0, 0, 0}
 
 				if triInPixel(x, i, tris) {
-					c = 1
+					p.r = 255
+					p.g = 255
+					p.b = 255
 				}
 
-				screen[i][x] = c
+				screen[i][x] = p
 			}
 		}
 
