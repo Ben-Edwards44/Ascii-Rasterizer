@@ -1,8 +1,7 @@
 package vector
 
-import (
-	"math"
-)
+
+import "math"
 
 
 type Vec3 struct {
@@ -42,7 +41,7 @@ func matMul(mat_a [][]float64, mat_b [][]float64) [][]float64 {
 }
 
 
-func (vec *Vec3) applyRot(rot_mat [][]float64) {
+func (vec *Vec3) applyRot(rot_mat [][]float64) Vec3 {
 	vec_mat := [][]float64 {
 		{vec.X},
 		{vec.Y},
@@ -51,42 +50,53 @@ func (vec *Vec3) applyRot(rot_mat [][]float64) {
 
 	rotated_mat := matMul(rot_mat, vec_mat)
 
-	vec.X = rotated_mat[0][0]
-	vec.Y = rotated_mat[1][0]
-	vec.Z = rotated_mat[2][0]
+	new_x := rotated_mat[0][0]
+	new_y := rotated_mat[1][0]
+	new_z := rotated_mat[2][0]
+
+	return Vec3{new_x, new_y, new_z}
 }
 
 
-func (vec *Vec3) RotX(angle float64) {
+func (vec *Vec3) rotX(angle float64) Vec3 {
 	rot_mat := [][]float64{
 		{1, 0, 0},
 		{0, math.Cos(angle), -math.Sin(angle)},
 		{0, math.Sin(angle), math.Cos(angle)},
 	}
 
-	vec.applyRot(rot_mat)
+	return vec.applyRot(rot_mat)
 }
 
 
-func (vec *Vec3) RotY(angle float64) {
+func (vec *Vec3) rotY(angle float64) Vec3 {
 	rot_mat := [][]float64{
 		{math.Cos(angle), 0, math.Sin(angle)},
 		{0, 1, 0},
 		{-math.Sin(angle), 0, math.Cos(angle)},
 	}
 
-	vec.applyRot(rot_mat)
+	return vec.applyRot(rot_mat)
 }
 
 
-func (vec *Vec3) RotZ(angle float64) {
+func (vec *Vec3) rotZ(angle float64) Vec3 {
 	rot_mat := [][]float64{
 		{math.Cos(angle), -math.Sin(angle), 0},
 		{math.Sin(angle), math.Cos(angle), 0},
 		{0, 0, 1},
 	}
 
-	vec.applyRot(rot_mat)
+	return vec.applyRot(rot_mat)
+}
+
+
+func (vec *Vec3) Rotate(rot_x float64, rot_y float64, rot_z float64) Vec3 {
+	new_vec := vec.rotX(rot_x)
+	new_vec = new_vec.rotX(rot_y)
+	new_vec = new_vec.rotZ(rot_z)
+
+	return new_vec
 }
 
 

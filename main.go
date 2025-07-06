@@ -1,6 +1,5 @@
 package main
 
-
 import (
 	"github.com/Ben-Edwards44/Ascii-Rasterizer/mesh"
 	"github.com/Ben-Edwards44/Ascii-Rasterizer/rasterizer"
@@ -29,11 +28,15 @@ func triInPixel(pixel_x int, pixel_y int, tris []rasterizer.Triangle) (bool, ras
 
 
 func otherTest() {
-	theta := 0.0
+	theta := 0.05
 	sun_dir := vector.Vec3{1, 0, 0}
+	model := mesh.ParseModel("models/cube.obj")
+	model.Translate(vector.Vec3{0, 0, 4})
+
 	for {
-		theta += 0.005
-		tris := mesh.ParseModel("models/suzanne.obj", theta, theta, theta, vector.Vec3{0, 0, 4})
+		model.Translate(vector.Vec3{0, 0, -4})
+		model.Rotate(theta, theta, theta)
+		model.Translate(vector.Vec3{0, 0, 4})
 
 		var screen [rasterizer.SCREEN_HEIGHT][rasterizer.SCREEN_WIDTH]pixel
 
@@ -41,7 +44,7 @@ func otherTest() {
 			for x := 0; x < rasterizer.SCREEN_WIDTH; x++ {
 				p := pixel{0, 0, 0}
 
-				hits, tri := triInPixel(x, i, tris)
+				hits, tri := triInPixel(x, i, model.Triangles)
 				if hits {
 					normal := tri.GetNormal()
 					light := (1 + vector.Dot3(&sun_dir, &normal)) * 0.5
@@ -64,5 +67,5 @@ func main() {
 	//triTest()
 	otherTest()
 
-	moveCursor(rasterizer.SCREEN_HEIGHT, false)
+	//moveCursor(rasterizer.SCREEN_HEIGHT, false)
 }

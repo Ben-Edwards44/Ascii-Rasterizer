@@ -53,6 +53,25 @@ func (tri *Triangle) GetWorldCenter() vector.Vec3 {
 }
 
 
+func (tri *Triangle) Rotate(rot_x float64, rot_y float64, rot_z float64) Triangle {
+	new_a := tri.world_a.Rotate(rot_x, rot_y, rot_z)
+	new_b := tri.world_b.Rotate(rot_x, rot_y, rot_z)
+	new_c := tri.world_c.Rotate(rot_x, rot_y, rot_z)
+	new_normal := tri.normal_vec.Rotate(rot_x, rot_y, rot_z)
+
+	return CreateTriangle(new_a, new_b, new_c, new_normal)
+}
+
+
+func (tri *Triangle) Translate(translation vector.Vec3) Triangle {
+	new_a := vector.Add(tri.world_a, translation)
+	new_b := vector.Add(tri.world_b, translation)
+	new_c := vector.Add(tri.world_c, translation)
+
+	return CreateTriangle(new_a, new_b, new_c, tri.normal_vec)
+}
+
+
 func (tri *Triangle) PointInTri(point vector.Vec2) bool {
 	ap := vector.Sub(point, tri.screen_a)
 	bp := vector.Sub(point, tri.screen_b)
