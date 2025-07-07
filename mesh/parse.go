@@ -1,16 +1,16 @@
 package mesh
 
-
 import (
 	"os"
 	"strconv"
 
-	"github.com/Ben-Edwards44/Ascii-Rasterizer/vector"
 	"github.com/Ben-Edwards44/Ascii-Rasterizer/rasterizer"
+	"github.com/Ben-Edwards44/Ascii-Rasterizer/vector"
 )
 
 
 const DIGITS = "0123456789.-"
+var DEFAULT_COLOUR = vector.Vec3{X: 255, Y: 255, Z: 255}
 
 
 func checkError(err error) {
@@ -87,6 +87,8 @@ func extractNums(line string) []float64 {
 func extractVectors(lines []string, identifier string) []vector.Vec3 {
 	var values []vector.Vec3
 	for _, i := range lines {
+		if len(i) == 0 {continue}
+
 		line_type := split(i, ' ')[0]
 		if line_type == identifier {
 			vertex_coords := extractNums(i)
@@ -149,8 +151,23 @@ func build_faces(lines []string, vertices []vector.Vec3, normals []vector.Vec3) 
 }
 
 
-func ParseModel(filename string) Model {
-	file_data := readFile(filename)
+func getColour(filename string) vector.Vec3 {
+	mat_data := readFile(filename)
+	mat_lines := split(mat_data, '\n')
+
+	diffuse_colours := extractVectors(mat_lines, "Kd")
+
+	diffuse_colour := DEFAULT_COLOUR
+	if len(diffuse_colours) > 0 {
+		diffuse_colour = diffuse_colours[0].Mul(255)
+	}
+
+	return diffuse_colour
+}
+
+
+func ParseModel(file_path string) Model {
+	file_data := readFile(file_path + ".obj")
 	lines := split(file_data, '\n')
 
 	vertices := extractVectors(lines, "v")
@@ -158,5 +175,7 @@ func ParseModel(filename string) Model {
 
 	model_triangles := build_faces(lines, vertices, normals)
 
-	return Model{model_triangles, vector.Vec3{255, 255, 255}}
+	colour := getColour(file_path + ".mtl")
+
+	return Model{model_triangles, colour}
 }

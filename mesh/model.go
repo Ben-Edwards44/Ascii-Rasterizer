@@ -9,7 +9,7 @@ import (
 
 type Model struct {
 	Triangles []rasterizer.Triangle
-	colour vector.Vec3
+	Colour vector.Vec3
 }
 
 

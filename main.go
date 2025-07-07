@@ -30,28 +30,30 @@ func triInPixel(pixel_x int, pixel_y int, tris []rasterizer.Triangle) (bool, ras
 func otherTest() {
 	theta := 0.05
 	sun_dir := vector.Vec3{1, 0, 0}
-	model := mesh.ParseModel("models/cube.obj")
+	model := mesh.ParseModel("models/torus")
 	model.Translate(vector.Vec3{0, 0, 4})
 
 	for {
 		model.Translate(vector.Vec3{0, 0, -4})
-		model.Rotate(theta, theta, theta)
+		model.Rotate(theta * 1.2, theta, theta)
 		model.Translate(vector.Vec3{0, 0, 4})
 
 		var screen [rasterizer.SCREEN_HEIGHT][rasterizer.SCREEN_WIDTH]pixel
 
 		for i := 0; i < rasterizer.SCREEN_HEIGHT; i++ {
 			for x := 0; x < rasterizer.SCREEN_WIDTH; x++ {
-				p := pixel{0, 0, 0}
+				p := pixel{0, 0, 0, 0}
 
 				hits, tri := triInPixel(x, i, model.Triangles)
 				if hits {
 					normal := tri.GetNormal()
 					light := (1 + vector.Dot3(&sun_dir, &normal)) * 0.5
 
-					p.r = int(255 * light)
-					p.g = int(255 * light)
-					p.b = int(255 * light)
+					p.r = int(model.Colour.X * light)
+					p.g = int(model.Colour.Y * light)
+					p.b = int(model.Colour.Z * light)
+
+					p.light = light
 				}
 
 				screen[i][x] = p

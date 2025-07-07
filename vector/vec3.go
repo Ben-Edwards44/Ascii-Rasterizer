@@ -21,6 +21,15 @@ func Add(a Vec3, b Vec3) Vec3 {
 }
 
 
+func (vec *Vec3) Mul(scalar float64) Vec3 {
+	return Vec3 {
+		vec.X * scalar,
+		vec.Y * scalar,
+		vec.Z * scalar,
+	}
+}
+
+
 func matMul(mat_a [][]float64, mat_b [][]float64) [][]float64 {
 	var result [][]float64
 	for i := 0; i < len(mat_a); i++ {
