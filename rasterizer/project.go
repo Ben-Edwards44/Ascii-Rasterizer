@@ -10,7 +10,7 @@ import (
 const (
 	SCREEN_WIDTH = 100
 	SCREEN_HEIGHT = 40
-	CAM_FOV = 1.5
+	CAM_FOV = math.Pi / 3
 )
 
 var VIEW_PLANE_HEIGHT = math.Tan(CAM_FOV / 2)
