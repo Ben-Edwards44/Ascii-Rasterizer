@@ -8,4 +8,4 @@
 
 ![Spinning cube](./images/cube.gif)
 
-*I definitely did not choose ASCII art because I have not learned any graphics libraries in go...*
+*I definitely did not choose ASCII art because I haven't yet learned how to use any graphics libraries in go...*
