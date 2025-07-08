@@ -98,7 +98,15 @@ func spinningObject(file_path string) {
 }
 
 
-func main() {
-	spinningObject("models/suzanne")
+func cleanup() {
+	showCursor()
 	moveCursor(rasterizer.SCREEN_HEIGHT, false)
+}
+
+
+func main() {
+	defer cleanup()
+
+	hideCursor()
+	spinningObject("models/cube")
 }

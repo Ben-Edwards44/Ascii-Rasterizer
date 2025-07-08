@@ -32,6 +32,16 @@ func setColour (r int, g int, b int) {
 }
 
 
+func hideCursor() {
+	fmt.Print("\033[?25l")
+}
+
+
+func showCursor() {
+	fmt.Print("\033[?25h")
+}
+
+
 func getChar(light float64) string {
 	chosen_char := int(light * float64(len(CHARS)))
 	char_inx := len(CHARS) - chosen_char - 1
