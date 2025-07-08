@@ -108,5 +108,5 @@ func main() {
 	defer cleanup()
 
 	hideCursor()
-	spinningObject("models/cube")
+	spinningObject("models/torus")
 }

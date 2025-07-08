@@ -35,12 +35,7 @@ func CreateTriangle(world_a vector.Vec3, world_b vector.Vec3, world_c vector.Vec
 	bc_out := bc.Rot90()
 	ca_out := ca.Rot90()
 
-	return Triangle{world_a, world_b, world_c, a, b, c, normal, ab_out, bc_out, ca_out}
-}
-
-
-func (tri *Triangle) GetNormal() vector.Vec3 {
-	return tri.normal_vec
+	return Triangle{world_a, world_b, world_c, a, b, c, normal.Normalise(), ab_out, bc_out, ca_out}
 }
 
 
@@ -50,6 +45,11 @@ func (tri *Triangle) GetWorldCenter() vector.Vec3 {
 	z := (tri.world_a.Z + tri.world_b.Z + tri.world_c.Z) / 3
 
 	return vector.Vec3{X: x, Y: y, Z: z}
+}
+
+
+func (tri *Triangle) GetNormal() vector.Vec3 {
+	return tri.normal_vec
 }
 
 
