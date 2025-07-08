@@ -31,7 +31,9 @@ func triInPixel(pixel_x int, pixel_y int, tris []rasterizer.Triangle) (bool, ras
 func otherTest() {
 	theta := 0.05
 	sun_dir := vector.Vec3{1, 0, 0}
-	model := mesh.ParseModel("models/cone")
+	model := mesh.ParseModel("models/torus")
+
+	model.Enlarge(1.5)
 	model.Translate(vector.Vec3{0, 0, 4})
 
 	for {

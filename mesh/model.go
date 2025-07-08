@@ -25,3 +25,10 @@ func (m *Model) Translate(translation vector.Vec3) {
 		m.Triangles[i] = tri.Translate(translation)
 	}
 }
+
+
+func (m *Model) Enlarge(scale_factor float64) {
+	for i, tri := range m.Triangles {
+		m.Triangles[i] = tri.Enlarge(scale_factor)
+	}
+}

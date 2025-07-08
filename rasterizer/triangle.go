@@ -72,6 +72,15 @@ func (tri *Triangle) Translate(translation vector.Vec3) Triangle {
 }
 
 
+func (tri *Triangle) Enlarge(scale_factor float64) Triangle {
+	new_a := tri.world_a.Mul(scale_factor)
+	new_b := tri.world_b.Mul(scale_factor)
+	new_c := tri.world_c.Mul(scale_factor)
+
+	return CreateTriangle(new_a, new_b, new_c, tri.normal_vec)
+}
+
+
 func (tri *Triangle) PointInTri(point vector.Vec2) bool {
 	ap := vector.Sub(point, tri.screen_a)
 	bp := vector.Sub(point, tri.screen_b)
