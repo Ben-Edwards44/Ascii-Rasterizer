@@ -30,6 +30,17 @@ func (vec *Vec3) Mul(scalar float64) Vec3 {
 }
 
 
+func (vec Vec3) Normalise() Vec3 {
+	mag := math.Pow(vec.X * vec.X + vec.Y * vec.Y + vec.Z * vec.Z, 0.5)
+
+	return Vec3 {
+		vec.X / mag,
+		vec.Y / mag,
+		vec.Z / mag,
+	}
+}
+
+
 func matMul(mat_a [][]float64, mat_b [][]float64) [][]float64 {
 	var result [][]float64
 	for i := 0; i < len(mat_a); i++ {
