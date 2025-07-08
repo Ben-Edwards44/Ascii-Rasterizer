@@ -20,7 +20,10 @@ func convertToViewPlane(point vector.Vec3) vector.Vec2 {
 	view_plane_y := point.Y / point.Z
 	fraction_up_plane := view_plane_y / VIEW_PLANE_HEIGHT
 
-	return vector.Vec2{X: point.X, Y: fraction_up_plane}
+	view_plane_x := point.X / point.Z
+	fraction_along_plane := view_plane_x / VIEW_PLANE_HEIGHT
+
+	return vector.Vec2{X: fraction_along_plane * 2, Y: fraction_up_plane}
 }
 
 

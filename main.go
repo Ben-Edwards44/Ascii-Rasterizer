@@ -1,5 +1,6 @@
 package main
 
+
 import (
 	"github.com/Ben-Edwards44/Ascii-Rasterizer/mesh"
 	"github.com/Ben-Edwards44/Ascii-Rasterizer/rasterizer"
@@ -30,12 +31,12 @@ func triInPixel(pixel_x int, pixel_y int, tris []rasterizer.Triangle) (bool, ras
 func otherTest() {
 	theta := 0.05
 	sun_dir := vector.Vec3{1, 0, 0}
-	model := mesh.ParseModel("models/torus")
+	model := mesh.ParseModel("models/cone")
 	model.Translate(vector.Vec3{0, 0, 4})
 
 	for {
 		model.Translate(vector.Vec3{0, 0, -4})
-		model.Rotate(theta * 1.2, theta, theta)
+		model.Rotate(theta, theta, theta)
 		model.Translate(vector.Vec3{0, 0, 4})
 
 		var screen [rasterizer.SCREEN_HEIGHT][rasterizer.SCREEN_WIDTH]pixel
